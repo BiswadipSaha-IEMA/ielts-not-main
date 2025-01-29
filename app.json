@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "English Soft Skills and IELTS",
+    "slug": "english-soft-skills-and-ielts",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/iconMain.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"],
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/iconMain.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.ielts.iema"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "domain": "https://ielts-iema.iemamerica.com/api",
+      "eas": {
+        "projectId": "67f519f9-5909-4962-a8a7-2054a794b5cc"
+      }
+    }
+  }
+}
