@@ -76,8 +76,10 @@ const TestScreen = () => {
   
         setInstructions(response.instructions);
         setTimerVariable(response.totalTime);
-        setQuestions(response.questions[0].question);
+        setQuestions(response.questions);
         setLoading(false);
+        console.log(response.questions)
+        console.log(currentQuestion)
       } catch (error) {
         console.error("Error fetching questions:", error);
       }
@@ -261,7 +263,7 @@ const TestScreen = () => {
               <Timer time={timerVariable} />
             </View>
           </View>
-          {/* <View
+          <View
           style={{
             padding: "3%",
             backgroundColor: "#fff",
@@ -293,7 +295,7 @@ const TestScreen = () => {
             )}
             .
           </Text>
-        </View> */}
+        </View>
 
           <View
             style={{
@@ -395,12 +397,13 @@ const TestScreen = () => {
           </View>
         </Modal>
         <View style={styles.testContainer}>
-          {/* <View style={styles.question}>
-            {questions?.questions[currentQuestion]?.question.includes(
+          
+          <View style={styles.question}>
+            {/* {questions?questions[currentQuestion]?.question.includes(
               ".mp3"
             ) ? (
               <>
-                {questions?.questions[currentQuestion]?.question && (
+                {questions?questions[currentQuestion]?.question && (
                   <AudioPlayer
                     key={audioKey} // Reset Audio component when key changes
                     // source={`https://ielts-iema.iemamerica.com${questions?.questions[currentQuestion]?.question}`}
@@ -411,8 +414,10 @@ const TestScreen = () => {
               <Text style={styles.questionText}>
                 {questions?.questions[currentQuestion]?.question}
               </Text>
-            )}
-          </View> */}
+            )} */}
+          </View>
+
+
           <ScrollView style={styles.answerContainer}>
             {/* <View>
               {questions?.questions[currentQuestion]?.options?.map(
@@ -475,6 +480,78 @@ const TestScreen = () => {
                 }
               )}
             </View> */}
+            {/* <View style={styles.ctaContainer}>
+  {questions?.questions[currentQuestion]?.id !== 1 && (
+    <Pressable
+      style={styles.clearButton}
+      onPress={async () => {
+        setShowModal(true);
+        setCurrentQuestion(currentQuestion - 1);
+        setIsScrolling(true);
+        await flatListRef.current.scrollToIndex({
+          animated: true,
+          index: currentQuestion - 1,
+        });
+        setTimeout(() => {
+          setShowModal(false);
+        }, 3500);
+      }}
+    >
+      <Text style={styles.clearButtonText}>Previous</Text>
+    </Pressable>
+  )}
+  <Pressable
+    style={[
+      styles.actionButton,
+      questions?.questions[currentQuestion]?.id === 1 && { width: "40%" },
+    ]}
+    onPress={() => {
+      handleClear(questions?.questions[currentQuestion]?.id);
+    }}
+  >
+    <Text style={styles.actionButtonText}>Clear</Text>
+  </Pressable>
+  <Pressable
+    style={[
+      styles.clearButton,
+      questions?.questions[currentQuestion]?.id === 1 && { width: "40%" },
+    ]}
+    onPress={() => {
+      if (
+        questions?.questions[currentQuestion]?.id !==
+        questions?.questions?.length
+      ) {
+        setShowModal(true);
+      }
+      if (isReadyToSubmit) {
+        submitHandler();
+      } else {
+        setCurrentQuestion(currentQuestion + 1);
+        setAudioKey(currentQuestion + 1);
+        setIsScrolling(true);
+        flatListRef.current.scrollToIndex({
+          animated: true,
+          index: currentQuestion + 1,
+        });
+        if (
+          questions?.questions[currentQuestion]?.id !==
+          questions?.questions?.length
+        ) {
+          setTimeout(() => {
+            setShowModal(false);
+          }, 3500);
+        }
+      }
+    }}
+  >
+    <Text style={styles.clearButtonText}>
+      {questions?.questions[currentQuestion]?.id ===
+      questions?.questions?.length
+        ? "Submit"
+        : "Next"}
+    </Text>
+  </Pressable>
+</View> */}
           </ScrollView>
 
           {/* <View style={styles.ctaContainer}>
