@@ -44,6 +44,7 @@ const TestScreen = () => {
         );
         // console.log(response.totaltime);
         console.log(response.passage);
+        
         setInstructions(response.passage);
         setTimerVariable(response.totaltime);
         setQuestions(response);
