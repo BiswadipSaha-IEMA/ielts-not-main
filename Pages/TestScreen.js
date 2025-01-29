@@ -34,35 +34,65 @@ const TestScreen = () => {
   const [checkAudio, setCheckAudio] = useState(false);
   const [instructions, setInstructions] = useState("");
 
+  // useEffect(() => {
+  //   const fetchQuestions = async () => {
+  //     try {
+  //       const token = await AsyncStorage.getItem("token");
+  //       const response = await getRequest(
+  //         `/exam/module${module}/level${level}/questions`,
+  //         token
+  //       );
+  //       // console.log(response.totaltime);
+  //       console.log(response.questions[0].question,"passageesssss1");
+  //       console.log(response.instructions,"instructions")
+  //       setInstructions(response.instructions);
+  //       console.log(response.totalTime,"time");
+  //       setTimerVariable(response.totalTime);
+  //       setQuestions(response.questions[0].question);
+  //       console.log(response.questions[0].question,"questionsss");
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.error("Error fetching questions:", error);
+  //     }
+  //   };
+
+  //   fetchQuestions();
+  // }, []);
+
+
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
+        console.log("Fetching token...");
         const token = await AsyncStorage.getItem("token");
+        console.log("Token fetched:", token);
+  
+        console.log("Sending request...");
         const response = await getRequest(
           `/exam/module${module}/level${level}/questions`,
           token
         );
-        // console.log(response.totaltime);
-        console.log(response.passage);
-        
-        setInstructions(response.passage);
-        setTimerVariable(response.totaltime);
-        setQuestions(response);
+        console.log("Response received:", response);
+  
+        setInstructions(response.instructions);
+        setTimerVariable(response.totalTime);
+        setQuestions(response.questions[0].question);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching questions:", error);
       }
     };
-
+  
     fetchQuestions();
   }, []);
+  
 
   useEffect(() => {
     if (instructions) {
       // const instructionArr= instructions[0].split('.')
-      console.log(typeof instructions); // string
-      const instructionArr = instructions?.split(".");
-      console.log(instructionArr);
+      // console.log(typeof instructions); // string
+      const instructionArr = instructions;
+      // console.log(instructionArr);
       if (instructionArr[instructionArr.length - 1] === "mp3")
         // console.log(true)
         setCheckAudio(true);
@@ -71,14 +101,24 @@ const TestScreen = () => {
   }, [instructions]);
 
   useEffect(() => {
-    if (
-      questions.questions &&
-      currentQuestion === questions.questions.length - 1
-    ) {
+    // if (
+    //   questions.questions &&
+    //   currentQuestion === questions.questions.length - 1
+    // ) {
+    //   setIsReadyToSubmit(true);
+    // } else {
+    //   setIsReadyToSubmit(false);
+    // }
+
+
+
+
+    if (questions.length && currentQuestion === questions.length - 1) {
       setIsReadyToSubmit(true);
     } else {
       setIsReadyToSubmit(false);
     }
+    
   }, [currentQuestion, questions]);
 
   function handleAnswers(id, optionKey) {
@@ -296,7 +336,7 @@ const TestScreen = () => {
                 {"  "}
                 to
                 {module === 1 || module === 3 ? (
-                  <Text>view passage</Text>
+                  <Text> view passage</Text>
                 ) : (
                   <Text>listen to audio</Text>
                 )}
@@ -355,7 +395,7 @@ const TestScreen = () => {
           </View>
         </Modal>
         <View style={styles.testContainer}>
-          <View style={styles.question}>
+          {/* <View style={styles.question}>
             {questions?.questions[currentQuestion]?.question.includes(
               ".mp3"
             ) ? (
@@ -363,7 +403,7 @@ const TestScreen = () => {
                 {questions?.questions[currentQuestion]?.question && (
                   <AudioPlayer
                     key={audioKey} // Reset Audio component when key changes
-                    source={`https://ielts-iema.iemamerica.com${questions?.questions[currentQuestion]?.question}`}
+                    // source={`https://ielts-iema.iemamerica.com${questions?.questions[currentQuestion]?.question}`}
                   />
                 )}
               </>
@@ -372,9 +412,9 @@ const TestScreen = () => {
                 {questions?.questions[currentQuestion]?.question}
               </Text>
             )}
-          </View>
+          </View> */}
           <ScrollView style={styles.answerContainer}>
-            <View>
+            {/* <View>
               {questions?.questions[currentQuestion]?.options?.map(
                 (option, index) => {
                   const id = questions?.questions[currentQuestion].id;
@@ -434,10 +474,10 @@ const TestScreen = () => {
                   );
                 }
               )}
-            </View>
+            </View> */}
           </ScrollView>
 
-          <View style={styles.ctaContainer}>
+          {/* <View style={styles.ctaContainer}>
             {questions?.questions[currentQuestion]?.id !== 1 && (
               <Pressable
                 style={styles.clearButton}
@@ -516,7 +556,7 @@ const TestScreen = () => {
                   : "Next"}
               </Text>
             </Pressable>
-          </View>
+          </View> */}
         </View>
       </View>
     </ScrollView>

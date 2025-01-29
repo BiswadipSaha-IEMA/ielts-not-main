@@ -89,7 +89,7 @@ function Module() {
       const token = await AsyncStorage.getItem("token");
       const progressResponse = await getRequest("/exam/progress", token);
       const questionsResponse = await getRequest(
-        `/exam/${module}/level1/questions`,
+        `/exam/module${module}/level1/questions`,
         token
       );
 
