@@ -43,6 +43,9 @@ const useHttp = () => {
 
     const apiUrl = `${domain}${endPoint}`;
 
+    console.log(apiUrl)
+    console.log(body)
+
     const headers = {
       Accept: "application/json",
       "Content-Type": "application/json",

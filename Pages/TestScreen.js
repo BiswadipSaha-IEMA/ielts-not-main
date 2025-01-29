@@ -33,6 +33,7 @@ const TestScreen = () => {
   const [timerVariable, setTimerVariable] = useState(1);
   const [checkAudio, setCheckAudio] = useState(false);
   const [instructions, setInstructions] = useState("");
+  const [getSet, setGetSet] = useState(0);
 
   // useEffect(() => {
   //   const fetchQuestions = async () => {
@@ -76,6 +77,9 @@ const TestScreen = () => {
   
         setInstructions(response.instructions);
         setTimerVariable(response.totalTime);
+        setGetSet(response.set);
+        console.log(response.set,'settttt')
+        // console.log(response.totalTime,"time");
         setQuestions(response.questions);
         setLoading(false);
         console.log(response.questions)
@@ -123,6 +127,10 @@ const TestScreen = () => {
     
   }, [currentQuestion, questions]);
 
+  useEffect(()=>{
+    console.log(questions.length,"questions")
+  },[questions])
+
   function handleAnswers(id, optionKey) {
     // Check if there's an existing answer for the given id
     const existingAnswerIndex = answers.findIndex(
@@ -167,11 +175,11 @@ const TestScreen = () => {
     try {
       const token = await AsyncStorage.getItem("token");
       const response = await postRequest(
-        `/exam/module${module}/level${level}/submit`,
+        `/exam/module${module}/level${level}/set${getSet}/submit`,
         { answers },
         token
       );
-      //console.log(response);
+      console.log(response);
       const { score } = response;
 
       Alert.alert(`Score: ${score}`, response.message);
@@ -369,7 +377,7 @@ const TestScreen = () => {
           <View style={styles.questionsList}>
             <FlatList
               ref={flatListRef}
-              data={questions.questions}
+              data={questions}
               renderItem={listComponent}
               horizontal={true}
               keyExtractor={(item) => item.id.toString()}
@@ -399,30 +407,33 @@ const TestScreen = () => {
         <View style={styles.testContainer}>
           
           <View style={styles.question}>
-            {/* {questions?questions[currentQuestion]?.question.includes(
+            {questions[currentQuestion]?.question.includes(
               ".mp3"
             ) ? (
               <>
-                {questions?questions[currentQuestion]?.question && (
+                {questions[currentQuestion]?.question && (
                   <AudioPlayer
                     key={audioKey} // Reset Audio component when key changes
-                    // source={`https://ielts-iema.iemamerica.com${questions?.questions[currentQuestion]?.question}`}
+                    // source={`https://ielts-iema.iemamerica.com${questions[currentQuestion]?.question}`}
                   />
                 )}
               </>
             ) : (
               <Text style={styles.questionText}>
-                {questions?.questions[currentQuestion]?.question}
+                {questions[currentQuestion]?.question}
               </Text>
-            )} */}
+            )}
+            {/* <Text style={styles.questionText}>
+                {questions[currentQuestion]?.question}
+              </Text> */}
           </View>
 
 
           <ScrollView style={styles.answerContainer}>
-            {/* <View>
-              {questions?.questions[currentQuestion]?.options?.map(
+            <View>
+              {questions[currentQuestion]?.options?.map(
                 (option, index) => {
-                  const id = questions?.questions[currentQuestion].id;
+                  const id = questions[currentQuestion].id;
                   const isSelected = selectedOption[id] === option.key;
 
                   return (
@@ -479,9 +490,9 @@ const TestScreen = () => {
                   );
                 }
               )}
-            </View> */}
-            {/* <View style={styles.ctaContainer}>
-  {questions?.questions[currentQuestion]?.id !== 1 && (
+            </View>
+            <View style={styles.ctaContainer}>
+  {questions[currentQuestion]?.id !== 1 && (
     <Pressable
       style={styles.clearButton}
       onPress={async () => {
@@ -503,10 +514,10 @@ const TestScreen = () => {
   <Pressable
     style={[
       styles.actionButton,
-      questions?.questions[currentQuestion]?.id === 1 && { width: "40%" },
+      questions[currentQuestion]?.id === 1 && { width: "40%" },
     ]}
     onPress={() => {
-      handleClear(questions?.questions[currentQuestion]?.id);
+      handleClear(questions[currentQuestion]?.id);
     }}
   >
     <Text style={styles.actionButtonText}>Clear</Text>
@@ -514,12 +525,12 @@ const TestScreen = () => {
   <Pressable
     style={[
       styles.clearButton,
-      questions?.questions[currentQuestion]?.id === 1 && { width: "40%" },
+      questions[currentQuestion]?.id === 1 && { width: "40%" },
     ]}
     onPress={() => {
       if (
-        questions?.questions[currentQuestion]?.id !==
-        questions?.questions?.length
+        questions[currentQuestion]?.id !==
+        questions?.length
       ) {
         setShowModal(true);
       }
@@ -534,8 +545,8 @@ const TestScreen = () => {
           index: currentQuestion + 1,
         });
         if (
-          questions?.questions[currentQuestion]?.id !==
-          questions?.questions?.length
+          questions[currentQuestion]?.id !==
+          questions?.length
         ) {
           setTimeout(() => {
             setShowModal(false);
@@ -545,17 +556,17 @@ const TestScreen = () => {
     }}
   >
     <Text style={styles.clearButtonText}>
-      {questions?.questions[currentQuestion]?.id ===
-      questions?.questions?.length
+      {questions[currentQuestion]?.id ===
+      questions?.length
         ? "Submit"
         : "Next"}
     </Text>
   </Pressable>
-</View> */}
+</View>
           </ScrollView>
 
           {/* <View style={styles.ctaContainer}>
-            {questions?.questions[currentQuestion]?.id !== 1 && (
+            {questions[currentQuestion]?.id !== 1 && (
               <Pressable
                 style={styles.clearButton}
                 onPress={async () => {
@@ -579,12 +590,12 @@ const TestScreen = () => {
             <Pressable
               style={[
                 styles.actionButton,
-                questions?.questions[currentQuestion]?.id === 1 && {
+                questions[currentQuestion]?.id === 1 && {
                   width: "40%",
                 },
               ]}
               onPress={() => {
-                handleClear(questions?.questions[currentQuestion]?.id);
+                handleClear(questions[currentQuestion]?.id);
               }}
             >
               <Text style={styles.actionButtonText}>Clear</Text>
@@ -592,14 +603,14 @@ const TestScreen = () => {
             <Pressable
               style={[
                 styles.clearButton,
-                questions?.questions[currentQuestion]?.id === 1 && {
+                questions[currentQuestion]?.id === 1 && {
                   width: "40%",
                 },
               ]}
               onPress={() => {
                 if (
-                  questions?.questions[currentQuestion]?.id !==
-                  questions?.questions?.length
+                  questions[currentQuestion]?.id !==
+                  questions?.length
                 ) {
                   setShowModal(true);
                 }
@@ -616,8 +627,8 @@ const TestScreen = () => {
                     index: currentQuestion + 1,
                   });
                   if (
-                    questions?.questions[currentQuestion]?.id !==
-                    questions?.questions?.length
+                    questions[currentQuestion]?.id !==
+                    questions?.length
                   ) {
                     setTimeout(() => {
                       setShowModal(false);
@@ -627,8 +638,8 @@ const TestScreen = () => {
               }}
             >
               <Text style={styles.clearButtonText}>
-                {questions?.questions[currentQuestion]?.id ===
-                questions?.questions?.length
+                {questions[currentQuestion]?.id ===
+                questions?.length
                   ? "Submit"
                   : "Next"}
               </Text>

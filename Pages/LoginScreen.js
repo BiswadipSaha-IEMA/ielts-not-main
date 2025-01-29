@@ -35,6 +35,7 @@ function LoginScreen({ navigation }) {
     setIsLoading(true)
     try {
       const endpoint = "/auth/login"; // Endpoint to send the request
+      
 
       const response = await postRequest(endpoint, values); 
       //console.log("Response:", response);
