@@ -32,22 +32,26 @@ const AnalysisScreen = () => {
   const analysisCardDetails = [
     {
       id: 1,
-      name: "Reading",
+      // name: "Reading",
+      name: "Writing",
       bandScore: progress?.module1?.bandScore,
     },
     {
       id: 2,
-      name: "Listening",
+      name: "Reading",
+      // name: "Listening",
       bandScore: progress?.module2?.bandScore,
     },
     {
       id: 3,
-      name: "Writing",
+      name: "Speaking",
+      // name: "Writing",
       bandScore: progress?.module3?.bandScore,
     },
     {
       id: 4,
-      name: "Speaking",
+      name: "Listening",
+      // name: "Speaking",
       bandScore: progress?.module4?.bandScore,
     },
   ];

@@ -29,8 +29,10 @@ const HomeScreen = () => {
   }, []);
   const propsList = [
     {
-      title: "Reading",
-      icon: "book",
+      title: "Writing",
+      icon: "pencil-square-o",
+      // title: "Reading",
+      // icon: "book",
       locked: false,
       completed: progress?.progress?.module1?.isCompleted ? true : false,
       modalVisible: modalVisible,
@@ -39,8 +41,10 @@ const HomeScreen = () => {
       level: 1,
     },
     {
-      title: "Listening",
-      icon: "hard-of-hearing",
+      title: "Reading",
+      icon: "book",
+      // title: "Listening",
+      // icon: "hard-of-hearing",
       locked:
         progress?.progress?.module1?.level2?.isLevelCompleted ? false
           : true,
@@ -54,8 +58,10 @@ const HomeScreen = () => {
       level: 1,
     },
     {
-      title: "Writing",
-      icon: "pencil-square-o",
+      title: "Speaking",
+      icon: "microphone",
+      // title: "Writing",
+      // icon: "pencil-square-o",
       locked:
         progress?.progress?.module2?.level2?.isLevelCompleted ? false
           : true,
@@ -68,8 +74,10 @@ const HomeScreen = () => {
       level: 1,
     },
     {
-      title: "Speaking",
-      icon: "microphone",
+      title: "Listening",
+      icon: "hard-of-hearing",
+      // title: "Speaking",
+      // icon: "microphone",
       locked:
         progress?.progress?.module3?.level2?.isLevelCompleted ? false
           : true,

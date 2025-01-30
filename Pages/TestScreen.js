@@ -16,6 +16,7 @@ import Timer from "../components/Timer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useExam } from "../context/ExamProvider";
 import AudioPlayer from "../components/Audio";
+import MicrophoneRecorder from "../components/MicrophoneRecorder";
 
 const TestScreen = () => {
   const { getRequest, postRequest } = useHttp();
@@ -35,6 +36,7 @@ const TestScreen = () => {
   const [instructions, setInstructions] = useState("");
   const [getSet, setGetSet] = useState(0);
   const [questionLength, setQuestionLength] = useState(0);
+  const accessToken= AsyncStorage.getItem('token')
 
   // useEffect(() => {
   //   const fetchQuestions = async () => {
@@ -68,18 +70,18 @@ const TestScreen = () => {
         console.log("Fetching token...");
         const token = await AsyncStorage.getItem("token");
         console.log("Token fetched:", token);
-  
+
         console.log("Sending request...");
         const response = await getRequest(
           `/exam/module${module}/level${level}/questions`,
           token
         );
         console.log("Response received:", response);
-  
+
         setInstructions(response.instructions);
         setTimerVariable(response.totalTime);
         setGetSet(response.set);
-        console.log(response.set,'settttt')
+        console.log(response.set, 'settttt')
         // console.log(response.totalTime,"time");
         setQuestions(response.questions);
         setQuestionLength(response.questions.length);
@@ -90,10 +92,10 @@ const TestScreen = () => {
         console.error("Error fetching questions:", error);
       }
     };
-  
+
     fetchQuestions();
   }, []);
-  
+
 
   useEffect(() => {
     if (instructions) {
@@ -126,12 +128,12 @@ const TestScreen = () => {
     } else {
       setIsReadyToSubmit(false);
     }
-    
+
   }, [currentQuestion, questions]);
 
-  useEffect(()=>{
-    console.log(questions.length,"questions")
-  },[questions])
+  useEffect(() => {
+    console.log(questions.length, "questions")
+  }, [questions])
 
   function handleAnswers(id, optionKey) {
     // Check if there's an existing answer for the given id
@@ -274,38 +276,38 @@ const TestScreen = () => {
             </View>
           </View>
           <View
-          style={{
-            padding: "3%",
-            backgroundColor: "#fff",
-            borderColor: "blue",
-            borderWidth: 2,
-            margin: "3%",
-            marginTop: "6%",
-            borderRadius: 5,
-            elevation: 8,
-          }}
-        >
-          <Text
             style={{
-              textAlign: "center",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 15,
+              padding: "3%",
+              backgroundColor: "#fff",
+              borderColor: "blue",
+              borderWidth: 2,
+              margin: "3%",
+              marginTop: "6%",
+              borderRadius: 5,
+              elevation: 8,
             }}
           >
-            Tap <Icon name="info" size={22} color="#858585" /> to view
-            instructions, and{"  "}
-            <Icon name="book" size={19} color="#858585" />
-            {"  "}
-            to{" "}
-            {module === 1 || module === 3 ? (
-              <Text>view passage</Text>
-            ) : (
-              <Text>listen audio</Text>
-            )}
-            .
-          </Text>
-        </View>
+            <Text
+              style={{
+                textAlign: "center",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 15,
+              }}
+            >
+              Tap <Icon name="info" size={22} color="#858585" /> to view
+              instructions, and{"  "}
+              <Icon name="book" size={19} color="#858585" />
+              {"  "}
+              to{" "}
+              {module === 1 || module === 3 ? (
+                <Text>view passage</Text>
+              ) : (
+                <Text>listen audio</Text>
+              )}
+              .
+            </Text>
+          </View>
 
           <View
             style={{
@@ -360,20 +362,20 @@ const TestScreen = () => {
           {
             !checkAudio &&
             <ScrollView
-            nestedScrollEnabled={true}
-            style={{
-              padding: "3%",
-              backgroundColor: "#fff",
-              borderColor: "blue",
-              borderWidth: 2,
-              margin: "3%",
-              marginTop: "6%",
-              borderRadius: 5,
-              height: 200,
-            }}
-          >
-            <Text>{instructions}</Text>
-          </ScrollView>
+              nestedScrollEnabled={true}
+              style={{
+                padding: "3%",
+                backgroundColor: "#fff",
+                borderColor: "blue",
+                borderWidth: 2,
+                margin: "3%",
+                marginTop: "6%",
+                borderRadius: 5,
+                height: 200,
+              }}
+            >
+              <Text>{instructions}</Text>
+            </ScrollView>
           }
 
           <View style={styles.questionsList}>
@@ -407,7 +409,7 @@ const TestScreen = () => {
           </View>
         </Modal>
         <View style={styles.testContainer}>
-          
+
           <View style={styles.question}>
             {questions[currentQuestion]?.question.includes(
               ".mp3"
@@ -416,7 +418,7 @@ const TestScreen = () => {
                 {questions[currentQuestion]?.question && (
                   <AudioPlayer
                     key={audioKey} // Reset Audio component when key changes
-                    // source={`https://ielts-iema.iemamerica.com${questions[currentQuestion]?.question}`}
+                  // source={`https://ielts-iema.iemamerica.com${questions[currentQuestion]?.question}`}
                   />
                 )}
               </>
@@ -432,7 +434,12 @@ const TestScreen = () => {
 
 
           <ScrollView style={styles.answerContainer}>
-            <View>
+            {
+              module===3?(
+              <><MicrophoneRecorder token={accessToken}/></>
+            ):
+
+            (<View>
               {questions[currentQuestion]?.options?.map(
                 (option, index) => {
                   const id = questions[currentQuestion].id;
@@ -492,161 +499,81 @@ const TestScreen = () => {
                   );
                 }
               )}
-            </View>
+            </View>)
+            }
             <View style={styles.ctaContainer}>
-  {questions[currentQuestion]?.id !== 1 && (
-    <Pressable
-      style={styles.clearButton}
-      onPress={async () => {
-        setShowModal(true);
-        setCurrentQuestion(currentQuestion - 1);
-        setIsScrolling(true);
-        await flatListRef.current.scrollToIndex({
-          animated: true,
-          index: currentQuestion - 1,
-        });
-        setTimeout(() => {
-          setShowModal(false);
-        }, 3500);
-      }}
-    >
-      <Text style={styles.clearButtonText}>Previous</Text>
-    </Pressable>
-  )}
-  <Pressable
-    style={[
-      styles.actionButton,
-      questions[currentQuestion]?.id === 1 && { width: "40%" },
-    ]}
-    onPress={() => {
-      handleClear(questions[currentQuestion]?.id);
-    }}
-  >
-    <Text style={styles.actionButtonText}>Clear</Text>
-  </Pressable>
-  <Pressable
-    style={[
-      styles.clearButton,
-      questions[currentQuestion]?.id === 1 && { width: "40%" },
-    ]}
-    onPress={() => {
-      if (
-        questions[currentQuestion]?.id !==
-        questions?.length
-      ) {
-        setShowModal(true);
-      }
-      if (isReadyToSubmit) {
-        submitHandler();
-      } else {
-        setCurrentQuestion(currentQuestion + 1);
-        setAudioKey(currentQuestion + 1);
-        setIsScrolling(true);
-        flatListRef.current.scrollToIndex({
-          animated: true,
-          index: currentQuestion + 1,
-        });
-        if (
-          questions[currentQuestion]?.id !==
-          questions?.length
-        ) {
-          setTimeout(() => {
-            setShowModal(false);
-          }, 3500);
-        }
-      }
-    }}
-  >
-    <Text style={styles.clearButtonText}>
-      {questions[currentQuestion]?.id ===
-      questions?.length
-        ? "Submit"
-        : "Next"}
-    </Text>
-  </Pressable>
-</View>
-          </ScrollView>
-
-          {/* <View style={styles.ctaContainer}>
-            {questions[currentQuestion]?.id !== 1 && (
+              {questions[currentQuestion]?.id !== 1 && (
+                <Pressable
+                  style={styles.clearButton}
+                  onPress={async () => {
+                    setShowModal(true);
+                    setCurrentQuestion(currentQuestion - 1);
+                    setIsScrolling(true);
+                    await flatListRef.current.scrollToIndex({
+                      animated: true,
+                      index: currentQuestion - 1,
+                    });
+                    setTimeout(() => {
+                      setShowModal(false);
+                    }, 3500);
+                  }}
+                >
+                  <Text style={styles.clearButtonText}>Previous</Text>
+                </Pressable>
+              )}
               <Pressable
-                style={styles.clearButton}
-                onPress={async () => {
-                  setShowModal(true);
-                  setCurrentQuestion(currentQuestion - 1);
-                  // Set scrolling flag to true when scrolling starts
-                  setIsScrolling(true);
-                  // Scroll to the previous question number
-                  await flatListRef.current.scrollToIndex({
-                    animated: true,
-                    index: currentQuestion - 1,
-                  });
-                  setTimeout(() => {
-                    setShowModal(false);
-                  }, 3500);
+                style={[
+                  styles.actionButton,
+                  questions[currentQuestion]?.id === 1 && { width: "40%" },
+                ]}
+                onPress={() => {
+                  handleClear(questions[currentQuestion]?.id);
                 }}
               >
-                <Text style={styles.clearButtonText}>Previous</Text>
+                <Text style={styles.actionButtonText}>Clear</Text>
               </Pressable>
-            )}
-            <Pressable
-              style={[
-                styles.actionButton,
-                questions[currentQuestion]?.id === 1 && {
-                  width: "40%",
-                },
-              ]}
-              onPress={() => {
-                handleClear(questions[currentQuestion]?.id);
-              }}
-            >
-              <Text style={styles.actionButtonText}>Clear</Text>
-            </Pressable>
-            <Pressable
-              style={[
-                styles.clearButton,
-                questions[currentQuestion]?.id === 1 && {
-                  width: "40%",
-                },
-              ]}
-              onPress={() => {
-                if (
-                  questions[currentQuestion]?.id !==
-                  questions?.length
-                ) {
-                  setShowModal(true);
-                }
-                if (isReadyToSubmit) {
-                  submitHandler();
-                } else {
-                  setCurrentQuestion(currentQuestion + 1);
-                  setAudioKey(currentQuestion + 1); // Reset Audio component key when moving to next question
-                  // Set scrolling flag to true when scrolling starts
-                  setIsScrolling(true);
-                  // Scroll to the next question number
-                  flatListRef.current.scrollToIndex({
-                    animated: true,
-                    index: currentQuestion + 1,
-                  });
+              <Pressable
+                style={[
+                  styles.clearButton,
+                  questions[currentQuestion]?.id === 1 && { width: "40%" },
+                ]}
+                onPress={() => {
                   if (
                     questions[currentQuestion]?.id !==
                     questions?.length
                   ) {
-                    setTimeout(() => {
-                      setShowModal(false);
-                    }, 3500);
+                    setShowModal(true);
                   }
-                }
-              }}
-            >
-              <Text style={styles.clearButtonText}>
-                {questions[currentQuestion]?.id ===
-                questions?.length
-                  ? "Submit"
-                  : "Next"}
-              </Text>
-            </Pressable>
-          </View> */}
+                  if (isReadyToSubmit) {
+                    submitHandler();
+                  } else {
+                    setCurrentQuestion(currentQuestion + 1);
+                    setAudioKey(currentQuestion + 1);
+                    setIsScrolling(true);
+                    flatListRef.current.scrollToIndex({
+                      animated: true,
+                      index: currentQuestion + 1,
+                    });
+                    if (
+                      questions[currentQuestion]?.id !==
+                      questions?.length
+                    ) {
+                      setTimeout(() => {
+                        setShowModal(false);
+                      }, 3500);
+                    }
+                  }
+                }}
+              >
+                <Text style={styles.clearButtonText}>
+                  {questions[currentQuestion]?.id ===
+                    questions?.length
+                    ? "Submit"
+                    : "Next"}
+                </Text>
+              </Pressable>
+            </View>
+          </ScrollView>
         </View>
       </View>
     </ScrollView>
