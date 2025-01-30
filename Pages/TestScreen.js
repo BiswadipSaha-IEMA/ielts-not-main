@@ -436,7 +436,7 @@ const TestScreen = () => {
           <ScrollView style={styles.answerContainer}>
             {
               module===3?(
-              <><MicrophoneRecorder token={accessToken}/></>
+              <><MicrophoneRecorder/></>
             ):
 
             (<View>

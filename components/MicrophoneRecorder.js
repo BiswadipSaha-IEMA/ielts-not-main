@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { Audio } from 'expo-av';
 import { FontAwesome } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function MicrophoneRecorder({token}) {
+export default function MicrophoneRecorder() {
   const [recording, setRecording] = useState(null);
   const [audioUri, setAudioUri] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -29,7 +30,7 @@ export default function MicrophoneRecorder({token}) {
     }
   };
 
-  const stopRecording = async () => {
+const stopRecording = async () => {
     setIsRecording(false);
     setIsLoading(true);
 
@@ -44,6 +45,15 @@ export default function MicrophoneRecorder({token}) {
     }
 
     try {
+        // Retrieve token from AsyncStorage
+        const BEARER_TOKEN = await AsyncStorage.getItem('token');
+
+        if (!BEARER_TOKEN) {
+            console.error('❌ Token not found in AsyncStorage');
+            setIsLoading(false);
+            return;
+        }
+
         const formData = new FormData();
         formData.append('file', {
             uri,
@@ -53,15 +63,13 @@ export default function MicrophoneRecorder({token}) {
 
         console.log('🔹 FormData:', formData);
 
-        // Replace with actual API URL and Bearer Token
         const API_URL = 'http://192.168.1.174:5000/api/exam/module3/level1/set1/submit';
-        const BEARER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OWIzZTk1ZDVjNTRhYzJhZDQwMWJlMCIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM4MjMxNTg4LCJleHAiOjE3MzgyMzg3ODh9.Jl6BE01Ft_Caw01lfw0bDF11qa_H3jFhMkBlJUaFgj4";
 
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${BEARER_TOKEN}`,
-                'Content-Type': 'multipart/form-data', // Necessary for file uploads
+                'Content-Type': 'multipart/form-data',
             },
             body: formData,
         });
@@ -70,7 +78,6 @@ export default function MicrophoneRecorder({token}) {
         const responseText = await response.text();
         console.log('🔹 Raw Response:', responseText);
 
-        // Try parsing JSON only if the response is valid
         if (response.ok) {
             const result = JSON.parse(responseText);
             console.log('✅ Upload successful:', result);
@@ -86,6 +93,7 @@ export default function MicrophoneRecorder({token}) {
         setIsLoading(false);
     }
 };
+
 
 
   
@@ -117,11 +125,7 @@ export default function MicrophoneRecorder({token}) {
 
       {isLoading && <ActivityIndicator size="large" color="#007AFF" />}
 
-      {audioUri && (
-        <TouchableOpacity onPress={playAudio} style={styles.audioButton}>
-          <Text style={styles.audioText}>🎵 Play Recorded Audio (.wav)</Text>
-        </TouchableOpacity>
-      )}
+      
     </View>
   );
 }
