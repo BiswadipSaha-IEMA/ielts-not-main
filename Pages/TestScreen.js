@@ -34,6 +34,7 @@ const TestScreen = () => {
   const [checkAudio, setCheckAudio] = useState(false);
   const [instructions, setInstructions] = useState("");
   const [getSet, setGetSet] = useState(0);
+  const [questionLength, setQuestionLength] = useState(0);
 
   // useEffect(() => {
   //   const fetchQuestions = async () => {
@@ -81,6 +82,7 @@ const TestScreen = () => {
         console.log(response.set,'settttt')
         // console.log(response.totalTime,"time");
         setQuestions(response.questions);
+        setQuestionLength(response.questions.length);
         setLoading(false);
         console.log(response.questions)
         console.log(currentQuestion)
