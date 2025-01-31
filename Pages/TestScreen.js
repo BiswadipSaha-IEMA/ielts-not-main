@@ -37,6 +37,7 @@ const TestScreen = () => {
   const [getSet, setGetSet] = useState(0);
   const [questionLength, setQuestionLength] = useState(0);
   const accessToken= AsyncStorage.getItem('token')
+  const [scoreUpdate, setScoreUpdate]= useState(0)
 
   // useEffect(() => {
   //   const fetchQuestions = async () => {
@@ -173,6 +174,32 @@ const TestScreen = () => {
       delete updatedSelectedOption[id];
       return updatedSelectedOption;
     });
+  }
+
+  useEffect(()=>{
+    console.log(scoreUpdate,"scoreUpdate")
+  },[scoreUpdate])
+
+
+  const submitAudioHandler= async()=>{
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const response = await postRequest(
+        `/exam/module${module}/level${level}/set${getSet}/submit`,
+        { avg_score:scoreUpdate },
+        token
+      );
+      console.log(response);
+
+      setIsTestRunning(false);
+
+      setSelectedOption({}); // Reset selectedOption state to clear the blue selection
+
+      // Reset answers state
+      setAnswers([]);
+    } catch (error) {
+      console.error("Error submitting audio:", error);
+    }
   }
 
   const submitHandler = async () => {
@@ -436,7 +463,7 @@ const TestScreen = () => {
           <ScrollView style={styles.answerContainer}>
             {
               module===3?(
-              <><MicrophoneRecorder/></>
+              <><MicrophoneRecorder scoreUpdate={scoreUpdate} setScoreUpdate={setScoreUpdate} /></>
             ):
 
             (<View>
@@ -545,6 +572,9 @@ const TestScreen = () => {
                     setShowModal(true);
                   }
                   if (isReadyToSubmit) {
+                    if(module===3){
+                      submitAudioHandler();
+                    }
                     submitHandler();
                   } else {
                     setCurrentQuestion(currentQuestion + 1);
