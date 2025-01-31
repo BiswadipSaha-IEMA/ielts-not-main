@@ -38,6 +38,7 @@ const TestScreen = () => {
   const [questionLength, setQuestionLength] = useState(0);
   const accessToken= AsyncStorage.getItem('token')
   const [scoreUpdate, setScoreUpdate]= useState(0)
+  const [correctAnswers, setCorrectAnswers]=useState(0);
 
   // useEffect(() => {
   //   const fetchQuestions = async () => {
@@ -186,7 +187,9 @@ const TestScreen = () => {
       const token = await AsyncStorage.getItem("token");
       const response = await postRequest(
         `/exam/module${module}/level${level}/set${getSet}/submit`,
-        { avg_score:scoreUpdate },
+        { avg_score:scoreUpdate/correctAnswers,
+          correctAnswer:correctAnswers
+         },
         token
       );
       console.log(response);
@@ -463,7 +466,7 @@ const TestScreen = () => {
           <ScrollView style={styles.answerContainer}>
             {
               module===3?(
-              <><MicrophoneRecorder scoreUpdate={scoreUpdate} setScoreUpdate={setScoreUpdate} /></>
+              <><MicrophoneRecorder scoreUpdate={scoreUpdate} setScoreUpdate={setScoreUpdate} setCorrectAnswers={setCorrectAnswers}/></>
             ):
 
             (<View>
