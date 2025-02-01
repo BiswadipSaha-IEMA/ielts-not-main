@@ -78,9 +78,21 @@ const TestScreen = () => {
           `/exam/module${module}/level${level}/questions`,
           token
         );
-        console.log("Response received:", response);
+        console.log("Response received:", response.passage);
+        let content=''
+        for(let i=0;i<response.passage.length;i++){
+          if(content.length===0){
+            content+=response.passage[i].content
+            console.log('content1',content)
+          }
+          else{
+          content+='\n'+response.passage[i].content
+          console.log('content2',content)}
+        }
 
-        setInstructions(response.instructions);
+        console.log(content)
+
+        setInstructions(content);
         setTimerVariable(response.totalTime);
         setGetSet(response.set);
         console.log(response.set, 'settttt')
@@ -403,10 +415,15 @@ const TestScreen = () => {
                 margin: "3%",
                 marginTop: "6%",
                 borderRadius: 5,
-                height: 200,
+                elevation: 8,
+                // height: "10%"
               }}
             >
-              <Text>{instructions}</Text>
+              <Text
+               style={{
+               
+              }}
+              >{instructions}</Text>
             </ScrollView>
           }
 
