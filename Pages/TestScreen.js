@@ -184,12 +184,14 @@ const TestScreen = () => {
 
   const submitAudioHandler= async()=>{
     try {
+      console.log(scoreUpdate)
+      console.log(correctAnswers)
+      const avg_score = scoreUpdate/correctAnswers
+      console.log(avg_score,'avg_score')
       const token = await AsyncStorage.getItem("token");
       const response = await postRequest(
         `/exam/module${module}/level${level}/set${getSet}/submit`,
-        { avg_score:scoreUpdate/correctAnswers,
-          correctAnswer:correctAnswers
-         },
+        { avg_score: scoreUpdate },
         token
       );
       console.log(response);
