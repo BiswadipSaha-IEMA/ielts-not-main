@@ -4,7 +4,7 @@ import { Audio } from 'expo-av';
 import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function MicrophoneRecorder({ scoreUpdate, setScoreUpdate, setCorrectAnswers }) {
+export default function MicrophoneRecorder({ scoreUpdate, setScoreUpdate, setCorrectAnswers, currentQuestion, setIsSpeakingSet, isSpeakingSet }) {
   const [recording, setRecording] = useState(null);
   const [audioUri, setAudioUri] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -81,7 +81,7 @@ export default function MicrophoneRecorder({ scoreUpdate, setScoreUpdate, setCor
 
       console.log('🔹 FormData:', formData);
 
-      const API_URL = 'http://192.168.1.174:5000/api/exam/module3/level1/set1/sendAudioFiles';
+      const API_URL = 'http://192.168.137.1:5000/api/exam/module3/level1/set1/sendAudioFiles';
 
       const response = await fetch(API_URL, {
         method: 'POST',
@@ -99,8 +99,13 @@ export default function MicrophoneRecorder({ scoreUpdate, setScoreUpdate, setCor
 
       if (response.ok) {
         const result = JSON.parse(responseText);
+        if(!isSpeakingSet.includes(currentQuestion)){
+          setIsSpeakingSet((prev) => [...prev, currentQuestion]);
+        }
         setScoreUpdate((prev)=>prev+result.finalScore);
-        setCorrectAnswers(response.correctAnswer)
+        console.log('correct answers:', result.correctAnswer)
+        // setCorrectAnswers(response.correctAnswersArray[0])
+        setCorrectAnswers((prev)=>prev+result.correctAnswer)
         console.log('✅ Upload successful:', result);
       } else {
         console.error('❌ Server Error:', response.status, responseText);
@@ -134,7 +139,9 @@ export default function MicrophoneRecorder({ scoreUpdate, setScoreUpdate, setCor
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={isRecording ? stopRecording : startRecording} style={styles.micButton}>
+      <TouchableOpacity onPress={isRecording ? stopRecording : startRecording} style={styles.micButton}
+      disabled={isLoading===true}
+      >
         <Animated.View
           style={[
             styles.progressCircle,

@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert,
   Modal,
+  TouchableOpacity,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import useHttp from "../hooks/useHttp";
@@ -17,6 +18,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useExam } from "../context/ExamProvider";
 import AudioPlayer from "../components/Audio";
 import MicrophoneRecorder from "../components/MicrophoneRecorder";
+import Animated from "react-native-reanimated";
+import { FontAwesome } from "@expo/vector-icons";
 
 const TestScreen = () => {
   const { getRequest, postRequest } = useHttp();
@@ -36,9 +39,10 @@ const TestScreen = () => {
   const [instructions, setInstructions] = useState("");
   const [getSet, setGetSet] = useState(0);
   const [questionLength, setQuestionLength] = useState(0);
-  const accessToken= AsyncStorage.getItem('token')
-  const [scoreUpdate, setScoreUpdate]= useState(0)
-  const [correctAnswers, setCorrectAnswers]=useState(0);
+  const accessToken = AsyncStorage.getItem("token");
+  const [scoreUpdate, setScoreUpdate] = useState(0);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [isSpeakingSet, setIsSpeakingSet] = useState([]);
 
   // useEffect(() => {
   //   const fetchQuestions = async () => {
@@ -48,14 +52,14 @@ const TestScreen = () => {
   //         `/exam/module${module}/level${level}/questions`,
   //         token
   //       );
-  //       // console.log(response.totaltime);
-  //       console.log(response.questions[0].question,"passageesssss1");
-  //       console.log(response.instructions,"instructions")
+  //       // //console.log(response.totaltime);
+  //       //console.log(response.questions[0].question,"passageesssss1");
+  //       //console.log(response.instructions,"instructions")
   //       setInstructions(response.instructions);
-  //       console.log(response.totalTime,"time");
+  //       //console.log(response.totalTime,"time");
   //       setTimerVariable(response.totalTime);
   //       setQuestions(response.questions[0].question);
-  //       console.log(response.questions[0].question,"questionsss");
+  //       //console.log(response.questions[0].question,"questionsss");
   //       setLoading(false);
   //     } catch (error) {
   //       console.error("Error fetching questions:", error);
@@ -65,43 +69,51 @@ const TestScreen = () => {
   //   fetchQuestions();
   // }, []);
 
-
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        console.log("Fetching token...");
+        //console.log("Fetching token...");
         const token = await AsyncStorage.getItem("token");
-        console.log("Token fetched:", token);
+        //console.log("Token fetched:", token);
 
-        console.log("Sending request...");
+        //console.log("Sending request...");
         const response = await getRequest(
           `/exam/module${module}/level${level}/questions`,
           token
         );
-        console.log("Response received:", response.passage);
-        let content=''
-        for(let i=0;i<response.passage.length;i++){
-          if(content.length===0){
-            content+=response.passage[i].content
-            console.log('content1',content)
+        //console.log("Response received:", response.passage);
+        let content = "";
+        if(module !== 4){
+          for (let i = 0; i < response.passage.length; i++) {
+            if (content.length === 0) {
+              content += response.passage[i].content;
+              //console.log("content1", content);
+            } else {
+              content += "\n" + response.passage[i].content;
+              //console.log("content2", content);
+            }
           }
-          else{
-          content+='\n'+response.passage[i].content
-          console.log('content2',content)}
         }
 
-        console.log(content)
+        if(module === 4){
+          console.log(response.passage)
+        content = response.passage[0].content
+        console.log('contenthjgvghjghjg',content)
+        //console.log(`http://192.168.137.1:5000/${content}`)
+        }
+
+        // console.log(`http://192.168.137.1:5000/${content}`);
 
         setInstructions(content);
         setTimerVariable(response.totalTime);
         setGetSet(response.set);
-        console.log(response.set, 'settttt')
-        // console.log(response.totalTime,"time");
+        //console.log(response.set, "settttt");
+        // //console.log(response.totalTime,"time");
         setQuestions(response.questions);
         setQuestionLength(response.questions.length);
         setLoading(false);
-        console.log(response.questions)
-        console.log(currentQuestion)
+        //console.log(response.questions);
+        //console.log(currentQuestion);
       } catch (error) {
         console.error("Error fetching questions:", error);
       }
@@ -110,17 +122,16 @@ const TestScreen = () => {
     fetchQuestions();
   }, []);
 
-
   useEffect(() => {
     if (instructions) {
       // const instructionArr= instructions[0].split('.')
-      // console.log(typeof instructions); // string
+      // //console.log(typeof instructions); // string
       const instructionArr = instructions;
-      // console.log(instructionArr);
+      // //console.log(instructionArr);
       if (instructionArr[instructionArr.length - 1] === "mp3")
-        // console.log(true)
+        // //console.log(true)
         setCheckAudio(true);
-      // console.log(instructionArr);
+      // //console.log(instructionArr);
     }
   }, [instructions]);
 
@@ -134,20 +145,16 @@ const TestScreen = () => {
     //   setIsReadyToSubmit(false);
     // }
 
-
-
-
     if (questions.length && currentQuestion === questions.length - 1) {
       setIsReadyToSubmit(true);
     } else {
       setIsReadyToSubmit(false);
     }
-
   }, [currentQuestion, questions]);
 
   useEffect(() => {
-    console.log(questions.length, "questions")
-  }, [questions])
+    //console.log(questions.length, "questions");
+  }, [questions]);
 
   function handleAnswers(id, optionKey) {
     // Check if there's an existing answer for the given id
@@ -189,24 +196,28 @@ const TestScreen = () => {
     });
   }
 
-  useEffect(()=>{
-    console.log(scoreUpdate,"scoreUpdate")
-  },[scoreUpdate])
+  useEffect(() => {
+    //console.log(scoreUpdate, "scoreUpdate");
+  }, [scoreUpdate]);
 
+  useEffect(() => {
+    //console.log("correctAnswersdfd", correctAnswers);
+  }, [correctAnswers]);
 
-  const submitAudioHandler= async()=>{
+  const submitAudioHandler = async () => {
     try {
-      console.log(scoreUpdate)
-      console.log(correctAnswers)
-      const avg_score = scoreUpdate/correctAnswers
-      console.log(avg_score,'avg_score')
+      //console.log(scoreUpdate);
+      //console.log(correctAnswers);
+      const avg_score = scoreUpdate / correctAnswers;
+      //console.log(avg_score, "avg_score");
       const token = await AsyncStorage.getItem("token");
+      const resultScore= scoreUpdate /questionLength 
       const response = await postRequest(
         `/exam/module${module}/level${level}/set${getSet}/submit`,
-        { avg_score: scoreUpdate },
+        { avg_score: resultScore },
         token
       );
-      console.log(response);
+      //console.log(response);
 
       setIsTestRunning(false);
 
@@ -217,7 +228,7 @@ const TestScreen = () => {
     } catch (error) {
       console.error("Error submitting audio:", error);
     }
-  }
+  };
 
   const submitHandler = async () => {
     try {
@@ -227,7 +238,7 @@ const TestScreen = () => {
         { answers },
         token
       );
-      console.log(response);
+      //console.log(response);
       const { score } = response;
 
       Alert.alert(`Score: ${score}`, response.message);
@@ -403,8 +414,7 @@ const TestScreen = () => {
             )}
           </View>
 
-          {
-            !checkAudio &&
+          {!checkAudio && (
             <ScrollView
               nestedScrollEnabled={true}
               style={{
@@ -419,13 +429,11 @@ const TestScreen = () => {
                 // height: "10%"
               }}
             >
-              <Text
-               style={{
-               
-              }}
-              >{instructions}</Text>
+              {module!==4?<Text style={{}}>{instructions}</Text>:
+              <AudioPlayer source={`http://192.168.137.1:5000${instructions}`}/>
+              }
             </ScrollView>
-          }
+          )}
 
           <View style={styles.questionsList}>
             <FlatList
@@ -439,7 +447,7 @@ const TestScreen = () => {
             />
           </View>
         </View>
-        <Modal
+        {/* <Modal
           animationType="fade"
           transparent={true}
           visible={showModal && module === 4}
@@ -456,18 +464,15 @@ const TestScreen = () => {
               </Text>
             </View>
           </View>
-        </Modal>
+        </Modal> */}
         <View style={styles.testContainer}>
-
           <View style={styles.question}>
-            {questions[currentQuestion]?.question.includes(
-              ".mp3"
-            ) ? (
+            {questions[currentQuestion]?.question.includes(".mp3") ? (
               <>
                 {questions[currentQuestion]?.question && (
                   <AudioPlayer
                     key={audioKey} // Reset Audio component when key changes
-                  // source={`https://ielts-iema.iemamerica.com${questions[currentQuestion]?.question}`}
+                    // source={`https://ielts-iema.iemamerica.com${questions[currentQuestion]?.question}`}
                   />
                 )}
               </>
@@ -481,16 +486,45 @@ const TestScreen = () => {
               </Text> */}
           </View>
 
-
           <ScrollView style={styles.answerContainer}>
-            {
-              module===3?(
-              <><MicrophoneRecorder scoreUpdate={scoreUpdate} setScoreUpdate={setScoreUpdate} setCorrectAnswers={setCorrectAnswers}/></>
-            ):
-
-            (<View>
-              {questions[currentQuestion]?.options?.map(
-                (option, index) => {
+            {module === 3 ? (
+              <>
+                {
+                  !isSpeakingSet.includes(currentQuestion)? <MicrophoneRecorder
+                  scoreUpdate={scoreUpdate}
+                  setScoreUpdate={setScoreUpdate}
+                  setCorrectAnswers={setCorrectAnswers}
+                  currentQuestion={currentQuestion}
+                  setIsSpeakingSet={setIsSpeakingSet}
+                  isSpeakingSet={isSpeakingSet}
+                /> : 
+                <View style={styles.container1}>
+                  
+                <TouchableOpacity 
+                // onPress={isRecording ? stopRecording : startRecording}
+                 style={styles.micButton}
+                // disabled={isLoading===true}
+                >
+                  {/* <Animated.View
+                    style={[
+                      styles.progressCircle,
+                      {
+                        borderColor: isRecording ? '#FF3B30' : '#007AFF',
+                        borderWidth: 5,
+                        transform: [{ scale: progress.interpolate({ inputRange: [0, 1], outputRange: [1, 1.5] }) }],
+                      },
+                    ]}
+                  /> */}
+                  <FontAwesome name="microphone" size={40} color="white" />
+                </TouchableOpacity>
+                </View>
+      
+                }
+                
+              </>
+            ) : (
+              <View>
+                {questions[currentQuestion]?.options?.map((option, index) => {
                   const id = questions[currentQuestion].id;
                   const isSelected = selectedOption[id] === option.key;
 
@@ -546,10 +580,9 @@ const TestScreen = () => {
                       )}
                     </Pressable>
                   );
-                }
-              )}
-            </View>)
-            }
+                })}
+              </View>
+            )}
             <View style={styles.ctaContainer}>
               {questions[currentQuestion]?.id !== 1 && (
                 <Pressable
@@ -587,14 +620,11 @@ const TestScreen = () => {
                   questions[currentQuestion]?.id === 1 && { width: "40%" },
                 ]}
                 onPress={() => {
-                  if (
-                    questions[currentQuestion]?.id !==
-                    questions?.length
-                  ) {
+                  if (questions[currentQuestion]?.id !== questions?.length) {
                     setShowModal(true);
                   }
                   if (isReadyToSubmit) {
-                    if(module===3){
+                    if (module === 3) {
                       submitAudioHandler();
                     }
                     submitHandler();
@@ -606,10 +636,7 @@ const TestScreen = () => {
                       animated: true,
                       index: currentQuestion + 1,
                     });
-                    if (
-                      questions[currentQuestion]?.id !==
-                      questions?.length
-                    ) {
+                    if (questions[currentQuestion]?.id !== questions?.length) {
                       setTimeout(() => {
                         setShowModal(false);
                       }, 3500);
@@ -618,8 +645,7 @@ const TestScreen = () => {
                 }}
               >
                 <Text style={styles.clearButtonText}>
-                  {questions[currentQuestion]?.id ===
-                    questions?.length
+                  {questions[currentQuestion]?.id === questions?.length
                     ? "Submit"
                     : "Next"}
                 </Text>
@@ -637,6 +663,21 @@ export default TestScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  container1: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  micButton: {
+    backgroundColor: '#A0AEC0',
+    padding: 20,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+    position: 'relative',
+    width: 80,
   },
   headerContainer: {},
   timerWithHeading: {

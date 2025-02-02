@@ -6,39 +6,56 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 let currentSound = null;
 
-const AudioPlayer = ({ source, optionKey }) => {
+const AudioPlayer = ({ source }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(0);
   const [sound, setSound] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [audioUrl, setAudioUrl] = useState(source);
 
   useEffect(() => {
-    if (source) {
-      loadAudio();
-    }
-
-    return () => {
-      if (sound !== null) {
-        sound.unloadAsync();
-        setSound(null);
+    const fetchAudio = async () => {
+      try {
+        setLoading(true);
+    
+        const response = await fetch(source, {
+          method: "GET", // Explicitly defining the GET request
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+    
+        // Ensure the URL is accessible before loading it
+        setAudioUrl(source);
+        loadAudio(source);
+      } catch (error) {
+        console.error("Error fetching audio:", error);
+        Alert.alert("Error", "Failed to fetch the audio file.");
+        setAudioUrl(null);
+      } finally {
+        setLoading(false);
       }
     };
+    
+
+    if (source) {
+      fetchAudio();
+    }
   }, [source]);
 
-  const loadAudio = async () => {
+  const loadAudio = async (audioUri) => {
     try {
-      setLoading(true);
-      const { sound: audioSound, status } = await Audio.Sound.createAsync({
-        uri: source,
-      });
+      const { sound: audioSound, status } = await Audio.Sound.createAsync({ uri: audioUri });
       setSound(audioSound);
       setDuration(status.durationMillis);
-      setLoading(false);
     } catch (error) {
-      setLoading(false);
       console.error("Error loading audio:", error);
-      Alert.alert("Error", "Failed to load audio. Please try again later.");
+      Alert.alert("Error", "Failed to load audio.");
       setSound(null);
     }
   };
@@ -64,7 +81,7 @@ const AudioPlayer = ({ source, optionKey }) => {
       setIsPlaying(!isPlaying);
     } catch (error) {
       console.error("Error during audio playback:", error);
-      Alert.alert("Error", "Failed to play audio. Please try again later.");
+      Alert.alert("Error", "Failed to play audio.");
     }
   };
 
@@ -76,10 +93,6 @@ const AudioPlayer = ({ source, optionKey }) => {
         await sound.setPositionAsync(newPosition);
       } catch (error) {
         console.error("Error setting audio position:", error);
-        Alert.alert(
-          "Error",
-          "Failed to set audio position. Please try again later."
-        );
       }
     }
   };
@@ -113,11 +126,7 @@ const AudioPlayer = ({ source, optionKey }) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handlePlayPause} style={styles.playButton}>
-        <MaterialIcons
-          name={isPlaying ? "pause" : "play-arrow"}
-          size={24}
-          color="#fff"
-        />
+        <MaterialIcons name={isPlaying ? "pause" : "play-arrow"} size={24} color="#fff" />
       </TouchableOpacity>
       <Slider
         style={styles.slider}
@@ -129,10 +138,7 @@ const AudioPlayer = ({ source, optionKey }) => {
         maximumTrackTintColor="rgba(66, 135, 245, 0.5)"
         thumbTintColor="#4287f5"
       />
-      <Text style={styles.timeText}>{`${formatTime(position)} / ${formatTime(
-        duration
-      )}`}</Text>
-      <Text style={styles.optionText}>{optionKey}</Text>
+      <Text style={styles.timeText}>{`${formatTime(position)} / ${formatTime(duration)}`}</Text>
     </View>
   );
 };
@@ -162,10 +168,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
-  },
-  optionText: {
-    fontSize: 12,
-    color: "#4287f5",
   },
 });
 
