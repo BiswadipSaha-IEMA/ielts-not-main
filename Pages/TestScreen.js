@@ -430,7 +430,7 @@ const TestScreen = () => {
               }}
             >
               {module!==4?<Text style={{}}>{instructions}</Text>:
-              <AudioPlayer source={`http://192.168.137.1:5000${instructions}`}/>
+              <AudioPlayer source={`${instructions}`}/>
               }
             </ScrollView>
           )}
