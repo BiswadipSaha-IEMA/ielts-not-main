@@ -44,30 +44,7 @@ const TestScreen = () => {
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [isSpeakingSet, setIsSpeakingSet] = useState([]);
 
-  // useEffect(() => {
-  //   const fetchQuestions = async () => {
-  //     try {
-  //       const token = await AsyncStorage.getItem("token");
-  //       const response = await getRequest(
-  //         `/exam/module${module}/level${level}/questions`,
-  //         token
-  //       );
-  //       // //console.log(response.totaltime);
-  //       //console.log(response.questions[0].question,"passageesssss1");
-  //       //console.log(response.instructions,"instructions")
-  //       setInstructions(response.instructions);
-  //       //console.log(response.totalTime,"time");
-  //       setTimerVariable(response.totalTime);
-  //       setQuestions(response.questions[0].question);
-  //       //console.log(response.questions[0].question,"questionsss");
-  //       setLoading(false);
-  //     } catch (error) {
-  //       console.error("Error fetching questions:", error);
-  //     }
-  //   };
 
-  //   fetchQuestions();
-  // }, []);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -330,7 +307,7 @@ const TestScreen = () => {
               <Timer time={timerVariable} />
             </View>
           </View>
-          <View
+          {/* <View
             style={{
               padding: "3%",
               backgroundColor: "#fff",
@@ -362,7 +339,7 @@ const TestScreen = () => {
               )}
               .
             </Text>
-          </View>
+          </View> */}
 
           <View
             style={{
@@ -414,7 +391,7 @@ const TestScreen = () => {
             )}
           </View>
 
-          {!checkAudio && (
+          {!checkAudio && module!==3 && (
             <ScrollView
               nestedScrollEnabled={true}
               style={{
@@ -497,6 +474,10 @@ const TestScreen = () => {
                   currentQuestion={currentQuestion}
                   setIsSpeakingSet={setIsSpeakingSet}
                   isSpeakingSet={isSpeakingSet}
+                  level={level}
+                  module={module}
+                  set={getSet}
+                  apiUrl={'http://192.168.1.174:5000/api/'}
                 /> : 
                 <View style={styles.container1}>
                   

@@ -4,7 +4,7 @@ import { Audio } from 'expo-av';
 import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function MicrophoneRecorder({ scoreUpdate, setScoreUpdate, setCorrectAnswers, currentQuestion, setIsSpeakingSet, isSpeakingSet }) {
+export default function MicrophoneRecorder({ scoreUpdate, setScoreUpdate, setCorrectAnswers, currentQuestion, setIsSpeakingSet, isSpeakingSet, level, module, set, apiUrl }) {
   const [recording, setRecording] = useState(null);
   const [audioUri, setAudioUri] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -81,7 +81,7 @@ export default function MicrophoneRecorder({ scoreUpdate, setScoreUpdate, setCor
 
       console.log('🔹 FormData:', formData);
 
-      const API_URL = 'http://192.168.137.1:5000/api/exam/module3/level1/set1/sendAudioFiles';
+      const API_URL = `${apiUrl}exam/module${module}/level${level}/set${set}/sendAudioFiles`;
 
       const response = await fetch(API_URL, {
         method: 'POST',
