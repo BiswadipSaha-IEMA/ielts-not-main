@@ -13,8 +13,10 @@ const Action = ({ name }) => {
       // If the PDF URL is not yet fetched, fetch it
       const token = await AsyncStorage.getItem("token");
       const response = await getRequest("/exam/getcertificate", token);
-      console.log(response.certificate)
-      const certUrl = `https://ielts-iema.iemamerica.com/${response.certificate}`;
+      console.log(response)
+      const certUrl = encodeURI(`${response.certificate}`);
+      // const certUrl = `${response.certificate}`;
+
   
       // Download the certificate
       const certAsset = Asset.fromURI(certUrl);
@@ -22,6 +24,11 @@ const Action = ({ name }) => {
   
       // Print the certificate
       await printAsync({ uri: certAsset.localUri });
+      // await printAsync({
+      //   uri: certAsset.localUri ,
+      //     orientation: "portrait", // Ensures vertical printing
+      //     html: "", // Prevents any fallback rendering issues
+      //   });
   
       console.log(certUrl); // Logging the certificate URL for debugging
   

@@ -28,8 +28,8 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      // "domain": "https://ielts-iema.iemamerica.com/api",
-      "domain":"http://192.168.1.174:5000/api",
+      "domain": "https://ielts-iema.iemamerica.com/api",
+      // "domain":"http://192.168.1.174:5000/api",
       // "domain":"http://192.168.1.174:5000/api",
       "eas": {
         "projectId": "67f519f9-5909-4962-a8a7-2054a794b5cc"
