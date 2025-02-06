@@ -60,7 +60,7 @@ const TestScreen = () => {
         );
         //console.log("Response received:", response.passage);
         let content = "";
-        if(module !== 4){
+        if (module !== 4) {
           for (let i = 0; i < response.passage.length; i++) {
             if (content.length === 0) {
               content += response.passage[i].content;
@@ -72,11 +72,11 @@ const TestScreen = () => {
           }
         }
 
-        if(module === 4){
+        if (module === 4) {
           console.log(response.passage)
-        content = response.passage[0].content
-        console.log('contenthjgvghjghjg',content)
-        //console.log(`http://192.168.137.1:5000/${content}`)
+          content = response.passage[0].content
+          console.log('contenthjgvghjghjg', content)
+          //console.log(`http://192.168.137.1:5000/${content}`)
         }
 
         // console.log(`http://192.168.137.1:5000/${content}`);
@@ -188,7 +188,7 @@ const TestScreen = () => {
       const avg_score = scoreUpdate / correctAnswers;
       //console.log(avg_score, "avg_score");
       const token = await AsyncStorage.getItem("token");
-      const resultScore= scoreUpdate /questionLength 
+      const resultScore = scoreUpdate / questionLength
       const response = await postRequest(
         `/exam/module${module}/level${level}/set${getSet}/submit`,
         { avg_score: resultScore },
@@ -391,7 +391,7 @@ const TestScreen = () => {
             )}
           </View>
 
-          {!checkAudio && module!==3 && (
+          {!checkAudio && module !== 3 && (
             <ScrollView
               nestedScrollEnabled={true}
               style={{
@@ -406,8 +406,8 @@ const TestScreen = () => {
                 // height: "10%"
               }}
             >
-              {module!==4?<Text style={{}}>{instructions}</Text>:
-              <AudioPlayer source={`${instructions}`}/>
+              {module !== 4 ? <Text style={{}}>{instructions}</Text> :
+                <AudioPlayer source={`${instructions}`} />
               }
             </ScrollView>
           )}
@@ -449,7 +449,7 @@ const TestScreen = () => {
                 {questions[currentQuestion]?.question && (
                   <AudioPlayer
                     key={audioKey} // Reset Audio component when key changes
-                    // source={`https://ielts-iema.iemamerica.com${questions[currentQuestion]?.question}`}
+                  // source={`https://ielts-iema.iemamerica.com${questions[currentQuestion]?.question}`}
                   />
                 )}
               </>
@@ -467,26 +467,26 @@ const TestScreen = () => {
             {module === 3 ? (
               <>
                 {
-                  !isSpeakingSet.includes(currentQuestion)? <MicrophoneRecorder
-                  scoreUpdate={scoreUpdate}
-                  setScoreUpdate={setScoreUpdate}
-                  setCorrectAnswers={setCorrectAnswers}
-                  currentQuestion={currentQuestion}
-                  setIsSpeakingSet={setIsSpeakingSet}
-                  isSpeakingSet={isSpeakingSet}
-                  level={level}
-                  module={module}
-                  set={getSet}
-                  apiUrl={'https://ielts-iema.iemamerica.com/api/'}
-                /> : 
-                <View style={styles.container1}>
-                  
-                <TouchableOpacity 
-                // onPress={isRecording ? stopRecording : startRecording}
-                 style={styles.micButton}
-                // disabled={isLoading===true}
-                >
-                  {/* <Animated.View
+                  !isSpeakingSet.includes(currentQuestion) ? <MicrophoneRecorder
+                    scoreUpdate={scoreUpdate}
+                    setScoreUpdate={setScoreUpdate}
+                    setCorrectAnswers={setCorrectAnswers}
+                    currentQuestion={currentQuestion}
+                    setIsSpeakingSet={setIsSpeakingSet}
+                    isSpeakingSet={isSpeakingSet}
+                    level={level}
+                    module={module}
+                    set={getSet}
+                    apiUrl={'https://ielts-iema.iemamerica.com/api/'}
+                  /> :
+                    <View style={styles.container1}>
+
+                      <TouchableOpacity
+                        // onPress={isRecording ? stopRecording : startRecording}
+                        style={styles.micButton}
+                      // disabled={isLoading===true}
+                      >
+                        {/* <Animated.View
                     style={[
                       styles.progressCircle,
                       {
@@ -496,12 +496,12 @@ const TestScreen = () => {
                       },
                     ]}
                   /> */}
-                  <FontAwesome name="microphone" size={40} color="white" />
-                </TouchableOpacity>
-                </View>
-      
+                        <FontAwesome name="microphone" size={40} color="white" />
+                      </TouchableOpacity>
+                    </View>
+
                 }
-                
+
               </>
             ) : (
               <View>
@@ -605,10 +605,11 @@ const TestScreen = () => {
                     setShowModal(true);
                   }
                   if (isReadyToSubmit) {
-                    if (module === 3) {
+                    if (module === 3)
                       submitAudioHandler();
-                    }
-                    submitHandler();
+
+                    else
+                      submitHandler();
                   } else {
                     setCurrentQuestion(currentQuestion + 1);
                     setAudioKey(currentQuestion + 1);
