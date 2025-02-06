@@ -29,6 +29,7 @@
     },
     "extra": {
       "domain": "https://ielts-iema.iemamerica.com/api",
+      // "domain": "http://192.168.90.12:5000/api",
       // "domain":"http://192.168.1.174:5000/api",
       // "domain":"http://192.168.1.174:5000/api",
       "eas": {

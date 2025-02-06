@@ -14,7 +14,7 @@ const Action = ({ name }) => {
       const token = await AsyncStorage.getItem("token");
       const response = await getRequest("/exam/getcertificate", token);
       console.log(response)
-      const certUrl = encodeURI(`${response.certificate}`);
+      const certUrl = encodeURI(`${response.certificateUrl}`);
       // const certUrl = `${response.certificate}`;
 
   
